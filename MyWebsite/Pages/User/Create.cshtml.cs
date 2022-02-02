@@ -30,15 +30,29 @@ namespace MyWebsite.Pages.User
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            //if (!ModelState.IsValid)
+            //{
+            //    return Page();
+            //}
+
+            //_context.ListUser.Add(ListUser);
+            //await _context.SaveChangesAsync();
+
+            //return RedirectToPage("./Index");
+
+            var emptyUser = new ListUser();
+
+            if (await TryUpdateModelAsync<ListUser>(
+                emptyUser,
+                "Alluser",   // Prefix for form value.
+                s => s.FullName, s => s.Email, s => s.Position, s => s.DateJoined))
             {
-                return Page();
+                _context.ListUser.Add(emptyUser);
+                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
             }
 
-            _context.ListUser.Add(ListUser);
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage("./Index");
+            return Page();
         }
     }
 }

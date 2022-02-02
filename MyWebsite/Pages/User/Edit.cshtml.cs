@@ -30,7 +30,8 @@ namespace MyWebsite.Pages.User
                 return NotFound();
             }
 
-            ListUser = await _context.ListUser.FirstOrDefaultAsync(m => m.ID == id);
+            ListUser = await _context.ListUser.FindAsync(id);
+            //FirstOrDefaultAsync(m => m.ID == id);
 
             if (ListUser == null)
             {
@@ -41,37 +42,56 @@ namespace MyWebsite.Pages.User
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int id)
         {
-            if (!ModelState.IsValid)
+            //    if (!ModelState.IsValid)
+            //    {
+            //        return Page();
+            //    }
+
+            //    _context.Attach(ListUser).State = EntityState.Modified;
+
+            //    try
+            //    {
+            //        await _context.SaveChangesAsync();
+            //    }
+            //    catch (DbUpdateConcurrencyException)
+            //    {
+            //        if (!ListUserExists(ListUser.ID))
+            //        {
+            //            return NotFound();
+            //        }
+            //        else
+            //        {
+            //            throw;
+            //        }
+            //    }
+
+            //    return RedirectToPage("./Index");
+            //}
+
+            var userToUpdate = await _context.ListUser.FindAsync(id);
+
+            if (userToUpdate == null)
             {
-                return Page();
+                return NotFound();
             }
 
-            _context.Attach(ListUser).State = EntityState.Modified;
-
-            try
+            if (await TryUpdateModelAsync<ListUser>(
+                userToUpdate,
+                "Alluser",
+                s => s.FullName, s => s.Email, s => s.Position, s => s.DateJoined))
             {
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ListUserExists(ListUser.ID))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return RedirectToPage("./Index");
             }
 
-            return RedirectToPage("./Index");
-        }
+            return Page();
 
-        private bool ListUserExists(int id)
-        {
-            return _context.ListUser.Any(e => e.ID == id);
+            //    private bool ListUserExists(int id)
+            //{
+            //    return _context.ListUser.Any(e => e.ID == id);
+            //}
         }
     }
 }

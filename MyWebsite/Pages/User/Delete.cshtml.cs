@@ -21,20 +21,28 @@ namespace MyWebsite.Pages.User
 
         [BindProperty]
         public ListUser ListUser { get; set; }
+        public string ErrorMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+
+        public async Task<IActionResult> OnGetAsync(int? id, bool? saveChangesError = false)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            ListUser = await _context.ListUser.FirstOrDefaultAsync(m => m.ID == id);
+            ListUser = await _context.ListUser.AsNoTracking().FirstOrDefaultAsync(m => m.ID == id);
 
             if (ListUser == null)
             {
                 return NotFound();
             }
+
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ErrorMessage = "Delete failed. Try again";
+            }
+
             return Page();
         }
 
@@ -47,13 +55,33 @@ namespace MyWebsite.Pages.User
 
             ListUser = await _context.ListUser.FindAsync(id);
 
-            if (ListUser != null)
+            //if (ListUser != null)
+            //{
+            //    _context.ListUser.Remove(ListUser);
+            //    await _context.SaveChangesAsync();
+            //}
+
+            //return RedirectToPage("./Index");
+
+            var user = await _context.ListUser.FindAsync(id);
+
+            if (user == null)
             {
-                _context.ListUser.Remove(ListUser);
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
 
-            return RedirectToPage("./Index");
+            try
+            {
+                _context.ListUser.Remove(user);
+                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                //Log the error (uncomment ex variable name and write a log.)
+                return RedirectToAction("./Delete",
+                                     new { id, saveChangesError = true });
+            }
         }
     }
 }

@@ -2,10 +2,10 @@
 @model MyWebsite.Pages.User.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "User";
 }
 
-<h1>Index</h1>
+<h1>User</h1>
 
 <p>
     <a asp-page="Create">Create New</a>
@@ -14,7 +14,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ListUser[0].FullName)
+                @*@Html.DisplayNameFor(model => model.ListUser[0].FullName)*@
+                <a asp-page="./Index" asp-route-sortOrder="@Model.NameSort">
+                    @Html.DisplayNameFor(model => model.ListUser[0].FullName)
+                </a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ListUser[0].Email)
