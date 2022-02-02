@@ -28,7 +28,10 @@ namespace MyWebsite
             services.AddRazorPages();
 
             services.AddDbContext<MyWebsiteContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("MyWebsiteContext")));
+                    options.UseNpgsql(Configuration.GetConnectionString("MyWebsiteContext")));
+            //services.AddIdentity<User, IdentityRole<long>>()
+            //    .AddEntityFrameworkStores<MyWebsiteContext, long>()
+            //    .AddDefaultTokenProviders();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
