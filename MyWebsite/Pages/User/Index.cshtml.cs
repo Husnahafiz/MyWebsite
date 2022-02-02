@@ -26,16 +26,21 @@ namespace MyWebsite.Pages.User
         public string CurrentSort { get; set; }
         public IList<ListUser> ListUser { get;set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(string sortOrder, string searchString)
         {
             //ListUser = await _context.ListUser.ToListAsync();
             // using System;
             NameSort = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             DateSort = sortOrder == "Date" ? "date_desc" : "Date";
 
+            CurrentFilter = searchString;
+
             IQueryable<ListUser> usersIQ = from s in _context.ListUser
                                              select s;
-
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                usersIQ = usersIQ.Where(s => s.FullName.Contains(searchString));
+            }
             switch (sortOrder)
             {
                 case "name_desc":
