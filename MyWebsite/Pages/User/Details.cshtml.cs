@@ -28,7 +28,7 @@ namespace MyWebsite.Pages.User
                 return NotFound();
             }
 
-            ListUser = await _context.ListUser.FirstOrDefaultAsync(m => m.ID == id);
+            ListUser = await _context.ListUsers.AsNoTracking().FirstOrDefaultAsync(m => m.ID == id);
 
             if (ListUser == null)
             {

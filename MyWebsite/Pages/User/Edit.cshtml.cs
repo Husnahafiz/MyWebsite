@@ -30,7 +30,7 @@ namespace MyWebsite.Pages.User
                 return NotFound();
             }
 
-            ListUser = await _context.ListUser.FindAsync(id);
+            ListUser = await _context.ListUsers.FindAsync(id);
             //FirstOrDefaultAsync(m => m.ID == id);
 
             if (ListUser == null)
@@ -70,7 +70,7 @@ namespace MyWebsite.Pages.User
             //    return RedirectToPage("./Index");
             //}
 
-            var userToUpdate = await _context.ListUser.FindAsync(id);
+            var userToUpdate = await _context.ListUsers.FindAsync(id);
 
             if (userToUpdate == null)
             {

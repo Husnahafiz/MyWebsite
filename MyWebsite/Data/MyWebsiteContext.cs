@@ -14,7 +14,7 @@ namespace MyWebsite.Data
         {
         }
 
-        public DbSet<MyWebsite.Models.ListUser> ListUser { get; set; }
+        public DbSet<ListUser> ListUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -14,7 +14,7 @@ namespace MyWebsite.Data
             context.Database.EnsureCreated();
 
             // Look for any students.
-            if (context.ListUser.Any())
+            if (context.ListUsers.Any())
             {
                 return;   // DB has been seeded
             }
@@ -25,7 +25,7 @@ namespace MyWebsite.Data
                 
             };
 
-            context.ListUser.AddRange(user);
+            context.ListUsers.AddRange(user);
             context.SaveChanges();
         }
     }

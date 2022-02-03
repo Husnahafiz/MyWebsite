@@ -31,7 +31,7 @@ namespace MyWebsite.Pages.User
                 return NotFound();
             }
 
-            ListUser = await _context.ListUser.AsNoTracking().FirstOrDefaultAsync(m => m.ID == id);
+            ListUser = await _context.ListUsers.AsNoTracking().FirstOrDefaultAsync(m => m.ID == id);
 
             if (ListUser == null)
             {
@@ -53,7 +53,7 @@ namespace MyWebsite.Pages.User
                 return NotFound();
             }
 
-            ListUser = await _context.ListUser.FindAsync(id);
+            ListUser = await _context.ListUsers.FindAsync(id);
 
             //if (ListUser != null)
             //{
@@ -63,7 +63,7 @@ namespace MyWebsite.Pages.User
 
             //return RedirectToPage("./Index");
 
-            var user = await _context.ListUser.FindAsync(id);
+            var user = await _context.ListUsers.FindAsync(id);
 
             if (user == null)
             {
@@ -72,7 +72,7 @@ namespace MyWebsite.Pages.User
 
             try
             {
-                _context.ListUser.Remove(user);
+                _context.ListUsers.Remove(user);
                 await _context.SaveChangesAsync();
                 return RedirectToPage("./Index");
             }
