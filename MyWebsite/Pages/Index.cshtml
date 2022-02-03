@@ -1,39 +1,169 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Use";
 }
 
-<div class="usermanagement">
-    <table class="Tableusermanagement" style="width:100%">
-        <thead>
+<h1>User</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+
+<form asp-page="./Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name:
+            <input type="text" name="SearchString" value="@Model.CurrentFilter" />
+            <input type="submit" value="Search" class="btn btn-primary" /> |
+            <button onclick="tablesToExcel('#usertable','Report.xls');" id="create-e" class="btn btn-primary" tabindex="0" aria-controls="example" type="button"><span>Export to Excel</span></button> |
+            <a asp-page="./Index">Back to full List</a>
+        </p>
+    </div>
+
+</form>
+
+<table class="table" id="usertable">
+    <thead>
+        <tr>
+            <th>
+                @*@Html.DisplayNameFor(model => model.ListUser[0].FullName)*@
+                <a asp-page="./Index" asp-route-sortOrder="@Model.NameSort">
+                    @Html.DisplayNameFor(model => model.ListUser[0].FullName)
+                </a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ListUser[0].Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ListUser[0].Position)
+            </th>
+            <th>
+                @*@Html.DisplayNameFor(model => model.ListUser[0].DateJoined)*@
+                <a asp-page="./Index" asp-route-sortOrder="@Model.DateSort">
+                    @Html.DisplayNameFor(model => model.ListUser[0].DateJoined)
+                </a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListUser)
+        {
             <tr>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Position</th>
-                <th>Date Joined</th>
-                <th>Action</th>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Position)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateJoined)
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
+                </td>
             </tr>
-        </thead>
+        }
+    </tbody>
+</table>
 
-        <tbody>
-            <tr>
-                <td>
-                </td>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script type="text/javascript">
+    var tablesToExcel = (function ($) {
+        var uri = 'data:application/vnd.ms-excel;base64,'
+            , html_start = `<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">`
+            , template_ExcelWorksheet = `<x:ExcelWorksheet><x:Name>{SheetName}</x:Name><x:WorksheetSource HRef="sheet{SheetIndex}.htm"/></x:ExcelWorksheet>`
+            , template_ListWorksheet = `<o:File HRef="sheet{SheetIndex}.htm"/>`
+            , template_HTMLWorksheet = `
+------=_NextPart_dummy
+Content-Location: sheet{SheetIndex}.htm
+Content-Type: text/html; charset=windows-1252
 
-                <td>
-                </td>
-                <td>
-                </td>
+` + html_start + `
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <link id="Main-File" rel="Main-File" href="../WorkBook.htm">
+  <link rel="File-List" href="filelist.xml">
+</head>
+<body><table>{SheetContent}</table></body>
+</html>`
+            , template_WorkBook = `MIME-Version: 1.0
+X-Document-Type: Workbook
+Content-Type: multipart/related; boundary="----=_NextPart_dummy"
 
-                <td>
-                </td>
-                <td>
-                </td>
+------=_NextPart_dummy
+Content-Location: WorkBook.htm
+Content-Type: text/html; charset=windows-1252
 
-            </tr>
+` + html_start + `
+<head>
+<meta name="Excel Workbook Frameset">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="File-List" href="filelist.xml">
+<!--[if gte mso 9]><xml>
+ <x:ExcelWorkbook>
+  <x:ExcelWorksheets>{ExcelWorksheets}</x:ExcelWorksheets>
+  <x:ActiveSheet>0</x:ActiveSheet>
+ </x:ExcelWorkbook>
+</xml><![endif]-->
+</head>
+<frameset>
+  <frame src="sheet0.htm" name="frSheet">
+  <noframes><body><p>This page uses frames, but your browser does not support them.</p></body></noframes>
+</frameset>
+</html>
+{HTMLWorksheets}
+Content-Location: filelist.xml
+Content-Type: text/xml; charset="utf-8"
 
+<xml xmlns:o="urn:schemas-microsoft-com:office:office">
+  <o:MainFile HRef="../WorkBook.htm"/>
+  {ListWorksheets}
+  <o:File HRef="filelist.xml"/>
+</xml>
+------=_NextPart_dummy--
+`
+            , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+            , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
+        return function (tables, filename) {
+            var context_WorkBook = {
+                ExcelWorksheets: ''
+                , HTMLWorksheets: ''
+                , ListWorksheets: ''
+            };
+            var tables = jQuery(tables);
+            $.each(tables, function (SheetIndex) {
+                var $table = $(this);
+                var SheetName = $table.attr('data-SheetName');
+                if ($.trim(SheetName) === '') {
+                    SheetName = 'Sheet' + SheetIndex;
+                }
+                context_WorkBook.ExcelWorksheets += format(template_ExcelWorksheet, {
+                    SheetIndex: SheetIndex
+                    , SheetName: SheetName
+                });
+                context_WorkBook.HTMLWorksheets += format(template_HTMLWorksheet, {
+                    SheetIndex: SheetIndex
+                    , SheetContent: $table.html()
+                });
+                context_WorkBook.ListWorksheets += format(template_ListWorksheet, {
+                    SheetIndex: SheetIndex
+                });
+            });
 
-        </tbody>
-    </table>
-</div>
+            var link = document.createElement("A");
+            link.href = uri + base64(format(template_WorkBook, context_WorkBook));
+            link.download = filename || 'User.xls';
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    })(jQuery);
+</script>
