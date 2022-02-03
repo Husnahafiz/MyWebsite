@@ -13,7 +13,7 @@ namespace MyWebsite.Pages.User
     public class IndexModel : PageModel
     {
         private readonly MyWebsiteContext _context;
-        private string sortOrder;
+        //private string sortOrder;
 
         public IndexModel(MyWebsiteContext context)
         {
@@ -35,7 +35,7 @@ namespace MyWebsite.Pages.User
 
             CurrentFilter = searchString;
 
-            IQueryable<ListUser> usersIQ = from s in _context.ListUser
+            IQueryable<ListUser> usersIQ = from s in _context.ListUsers
                                              select s;
             if (!String.IsNullOrEmpty(searchString))
             {
