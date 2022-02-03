@@ -25,32 +25,32 @@ namespace MyWebsite.Pages.User
         }
 
         [BindProperty]
-        public ListUser ListUser { get; set; }
+        public ListUser ListUsers { get; set; }
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return Page();
-            //}
-
-            //_context.ListUser.Add(ListUser);
-            //await _context.SaveChangesAsync();
-
-            //return RedirectToPage("./Index");
-
-            var emptyUser = new ListUser();
-
-            if (await TryUpdateModelAsync<ListUser>(
-                emptyUser,
-                "Alluser",   // Prefix for form value.
-                s => s.FullName, s => s.Email, s => s.Position, s => s.DateJoined))
+            if (!ModelState.IsValid)
             {
-                _context.ListUser.Add(emptyUser);
-                await _context.SaveChangesAsync();
-                return RedirectToPage("./Index");
+                return Page();
             }
+
+            _context.ListUsers.Add(ListUsers);
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage("./Index");
+
+            //var emptyUser = new ListUser();
+
+            //if (await TryUpdateModelAsync<ListUser>(
+            //    emptyUser,
+            //    "Alluser",   // Prefix for form value.
+            //    s => s.FullName, s => s.Email, s => s.Position, s => s.DateJoined))
+            //{
+            //    _context.ListUsers.Add(emptyUser);
+            //    await _context.SaveChangesAsync();
+            //    return RedirectToPage("./Index");
+            //}
 
             return Page();
         }
