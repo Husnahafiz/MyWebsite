@@ -52,7 +52,7 @@ namespace MyWebsite.Pages.User
             //    return RedirectToPage("./Index");
             //}
 
-            return Page();
+            //return Page();
         }
     }
 }
